@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEGEND M ALI - WHATSAPP PAIRING CORE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Fira Code', monospace; }
+        body { background-color: #030303; color: #00ff66; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow-x: hidden; padding: 20px; }
+        .terminal-container { width: 100%; max-width: 650px; background: rgba(5, 10, 5, 0.95); border: 2px solid #00ff66; border-radius: 8px; box-shadow: 0 0 25px rgba(0, 255, 102, 0.3); overflow: hidden; }
+        .terminal-header { background: #111; padding: 12px; display: flex; align-items: center; border-bottom: 1px solid #00ff66; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+        .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
+        .terminal-title { margin-left: 15px; font-size: 11px; color: #888; letter-spacing: 1px; }
+        .terminal-body { padding: 30px; }
+        h1 { font-size: 20px; color: #00ff66; text-shadow: 0 0 10px rgba(0, 255, 102, 0.5); margin-bottom: 8px; text-align: center; }
+        .sub-title { font-size: 11px; color: #ff0055; text-align: center; margin-bottom: 25px; font-weight: bold; }
+        .status-text { margin-bottom: 15px; font-size: 13px; color: #00bcff; }
+        .online { text-shadow: 0 0 8px #00ff66; animation: blink 1.5s infinite; }
+        .input-section { display: flex; flex-direction: column; gap: 15px; background: #000; border: 1px solid #00ff66; padding: 15px; border-radius: 4px; margin-top: 20px; }
+        .prompt-line { display: flex; align-items: center; gap: 10px; }
+        .terminal-prompt { color: #ff0055; font-size: 13px; white-space: nowrap; }
+        input[type="number"] { background: transparent; border: none; color: #00ff66; font-size: 16px; outline: none; width: 100%; }
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; }
+        button { background: #00ff66; color: #000; border: none; padding: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 14px; letter-spacing: 1px; }
+        button:hover { background: #000; color: #00ff66; box-shadow: 0 0 15px #00ff66; }
+        .hidden { display: none; }
+        #loadingSection { margin-top: 20px; color: #ffaa00; font-size: 13px; line-height: 1.6; }
+        .success-box { margin-top: 25px; border: 1px dashed #00ff66; padding: 20px; text-align: center; background: rgba(0, 255, 102, 0.03); }
+        .glowing-code { font-size: 36px; font-weight: bold; letter-spacing: 4px; color: #ffffff; text-shadow: 0 0 15px #00ff66, 0 0 25px #00ff66; margin: 20px 0; }
+        .hint { font-size: 11px; color: #888; }
+        @keyframes blink { 50% { opacity: 0; } }
+        .blink { animation: blink 1s infinite; }
+    </style>
+</head>
+<body>
+
+    <div class="terminal-container">
+        <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <div class="terminal-title">LEGEND M ALI DATABASE SYSTEM v3.0</div>
+        </div>
+
+        <div class="terminal-body">
+            <h1>⚡ LEGEND M ALI WHATSAPP BOT INTERFACE ⚡</h1>
+            <div class="sub-title">SYSTEM OWNER CONTROL REGISTERED: LEGEND M ALI</div>
+            
+            <p class="status-text">> SYSTEM STATUS: <span class="online">ONLINE & ACTIVE</span></p>
+            <p class="status-text">> CORE PROTOCOL: <span style="color:#fff;">PAIRING TERMINAL READY</span></p>
+
+            <div class="input-section">
+                <div class="prompt-line">
+                    <span class="terminal-prompt">M_ALI_ROOT@SERVER:~$</span>
+                    <input type="number" id="phoneNumber" placeholder="Enter number with country code (e.g. 923001234567)" required>
+                </div>
+                <button onclick="generatePairCode()" id="submitBtn">EXECUTE PAIRING COMMAND</button>
+            </div>
+
+            <div id="loadingSection" class="hidden">
+                <p class="blink">> [INFO] Establishing secure proxy link...</p>
+                <p>> [INFO] Injecting customized Legend Core tokens...</p>
+                <p>> [INFO] Requesting secure authorization token from WhatsApp system...</p>
+            </div>
+
+            <div id="resultSection" class="hidden">
+                <div class="success-box">
+                    <h3 style="font-size:14px; color:#00ff66;">🔓 SECURE PAIRING CODE GENERATION SUCCESSFUL</h3>
+                    <div id="pairCodeDisplay" class="glowing-code">XXXX-XXXX</div>
+                    <p class="hint">Open WhatsApp -> Linked Devices -> Link with Phone Number -> Enter this key.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generatePairCode() {
+            const number = document.getElementById("phoneNumber").value;
+            const submitBtn = document.getElementById("submitBtn");
+            const loadingSection = document.getElementById("loadingSection");
+            const resultSection = document.getElementById("resultSection");
+            const pairCodeDisplay = document.getElementById("pairCodeDisplay");
+
+            if (!number) {
+                alert("Please enter your target WhatsApp number including country code!");
+                return;
+            }
+
+            submitBtn.disabled = true;
+            loadingSection.classList.remove("hidden");
+            resultSection.classList.add("hidden");
+
+            fetch(`/api/index?number=${number}`)
+                .then(res => res.json())
+                .then(data => {
+                    loadingSection.classList.add("hidden");
+                    resultSection.classList.remove("hidden");
+                    submitBtn.disabled = false;
+                    
+                    if(data.code) {
+                        pairCodeDisplay.innerText = data.code;
+                    } else {
+                        pairCodeDisplay.innerText = "ERROR-404";
+                    }
+                })
+                .catch(err => {
+                    loadingSection.classList.add("hidden");
+                    resultSection.classList.remove("hidden");
+                    submitBtn.disabled = false;
+                    
+                    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                    let fallbackCode = "MALI-";
+                    for (let i = 0; i < 4; i++) {
+                        fallbackCode += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    pairCodeDisplay.innerText = fallbackCode;
+                });
+        }
+    </script>
+</body>
+</html>
